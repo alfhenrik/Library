@@ -69,7 +69,7 @@ jobs:
           server: ${{ secrets.OCTOPUS_SERVER_URL }}
           packages: "./packages/Octopus.Library.Web.${{ env.PACKAGE_VERSION }}.zip"
 
-      - name: Create release and deploy to Development
+      - name: Create release
         uses: OctopusDeploy/create-release-action@v1
         with:
           api_key: ${{ secrets.OCTOPUS_API_KEY }}
@@ -78,7 +78,7 @@ jobs:
           release_number: "${{ env.PACKAGE_VERSION }}"
           packages:
             "Octopus.Library.Web:${{ env.PACKAGE_VERSION }}"
-          deploy_to: |
-            'Development'
-            'Test'
-          wait_for_deployment: true
+            
+      - name: Deploy release
+        run: octo deploy-release --server="${{ secrets.OCTOPUS_SERVER_URL }}" --apiKey="${{ secrets.OCTOPUS_API_KEY }}" --project="Library" --releaseNumber="${{ env.PACKAGE_VERSION }}" --deployTo="Development" --deployTo="Test" --waitForDeployment
+      
